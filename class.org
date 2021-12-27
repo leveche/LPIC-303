@@ -15,3 +15,28 @@
 - Self-sign the cert since root of CA trust:
   =openssl req =utf8 -new -key CA_key.pem -x509 -days 3650 -out CA_cert.pem=
 - sign a CSR: =openssl ca -in csr.pem -out cert.pem=
+* 325.2: SSL & TLS
+- =httpd.conf= global:
+  =SSLCertificateFile= now includes the entire chain, deprecating =SSLCertificateChainFile=
+  =SSLCertificateKeysFile=
+  =SSLVerifyDepth=
+  =SSLVerifyClient=
+  =SSLCACertificateFIle=
+  =SSLVerifyClient require=
+  =SSLUseStapling On=
+  =SSLStaplingCache shmcb:logs/ssl_stapling(32768)=
+- per-vserver:
+  =SSLCipherSuite HIGH:!3DES:!aNULL:!MD5:!SEED:!IDEA=
+  =SSLHonorCipherOrder on=
+- SNI: Server Name Indication
+  =SSLStrictSNIVHostCheck off= - non-SNI clients can use name-based vhosts
+- HSTS: HTTP Strict Transport security
+  - server instruct the browser all traffic to be redirected over TLS.
+    set =Strict-Transport-Security "max-age 300; includeSubDomains; preload"=
+- =s_client=
+  =openssl s_client -connect host:port=. use =... -status= to see OCSP stapling
+  =openssl verify cert=
+  =openssl verify-verbose cert=
+  =openssl x509 -text -in cert.pem=
+- x509v3 extensions
+  - =CA:TRUE, pathlen: 0= means this CA can only sign end certs, not other CAs
