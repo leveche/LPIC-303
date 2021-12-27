@@ -1,0 +1,17 @@
+#+TITLE: LPIC-303 security
+
+* 325.1: x509
+
+- Generate encrypted private key =openssl genrsa -aes128 -out prikey.pem 2048=
+- self-signed cert =openssl req -utf8 -new -key privkey.pem -x509 -days 365 -out cert.pem=
+- CSR =openssl req -new -key privkey.pem -out csr=
+
+- DER - base64 -> PEM
+- P7B/PKCS#7 - windows
+- PFX/PKCS#12 - combines keys, certs chain
+** x509 CA
+- Generate keypair
+  =openssl genrsa -aes128 -out CA_key.pem 4096=
+- Self-sign the cert since root of CA trust:
+  =openssl req =utf8 -new -key CA_key.pem -x509 -days 3650 -out CA_cert.pem=
+- sign a CSR: =openssl ca -in csr.pem -out cert.pem=
